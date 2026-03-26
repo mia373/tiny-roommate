@@ -214,16 +214,21 @@ export function initSettings(pet) {
         pet.sprite.image.src = '/sprites/' + spriteName + '.png';
         pet.sprite.edgeClear = getSpriteRenderOptions(spriteName).edgeClear || 0;
 
-        // Update name to match character
+        // Only suggest default name if user hasn't customized it
         var charInfo = CHARACTERS[spriteName] || CHARACTERS._default;
-        pet.petName = charInfo.defaultName;
-        document.getElementById('setting-pet-name').value = charInfo.defaultName;
-        document.getElementById('chat-input').placeholder = 'Say something to ' + pet.petName + '...';
+        var currentInput = document.getElementById('setting-pet-name').value.trim();
+        var oldCharInfo = CHARACTERS[pet.currentSprite] || CHARACTERS._default;
+        var nameIsDefault = !currentInput || currentInput === oldCharInfo.defaultName;
 
         saveConfigField('sprite', spriteName);
-        saveConfigField('pet_name', charInfo.defaultName);
 
-        pet.showBubble('call me ' + charInfo.defaultName + '!', 2000, true);
+        if (nameIsDefault) {
+          pet.petName = charInfo.defaultName;
+          document.getElementById('setting-pet-name').value = charInfo.defaultName;
+          document.getElementById('chat-input').placeholder = 'Say something to ' + pet.petName + '...';
+          saveConfigField('pet_name', charInfo.defaultName);
+          pet.showBubble('call me ' + charInfo.defaultName + '!', 2000, true);
+        }
       }
       settingsOverlay.querySelectorAll('.sprite-option').forEach(function(b) {
         b.classList.toggle('active', b.dataset.sprite === pet.currentSprite);

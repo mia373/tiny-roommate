@@ -1,21 +1,30 @@
 <p align="center">
-  <img src="assets/tinyroommate-logo.svg" width="120" height="120" alt="TinyRoommate" />
+  <img src="assets/tinyroommate-logo.svg" width="100" height="100" alt="TinyRoommate" />
 </p>
 
 <h1 align="center">TinyRoommate</h1>
 
-<h3 align="center">A tiny AI companion that lives on your desktop.</h3>
-<p align="center">It sees your screen. It remembers your habits. It writes a diary.</p>
+<p align="center">
+  A tiny AI companion that lives on your desktop.<br/>
+  It sees your screen, remembers your habits, and writes a diary about you.
+</p>
 
-<!-- TODO: add demo GIF -->
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-macOS-black?style=flat-square" alt="macOS" />
+  <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License" />
+  <img src="https://img.shields.io/badge/tauri-v2-24C8D8?style=flat-square" alt="Tauri v2" />
+  <img src="https://img.shields.io/badge/powered%20by-Claude-D97757?style=flat-square" alt="Powered by Claude" />
+</p>
+
+<!-- TODO: add demo screenshot or GIF here -->
+
+---
 
 <br/>
 
-You open the app. A small cat appears on your desktop.
+You open the app. A small cat appears on your desktop. It walks around, sits down, yawns.
 
-It walks around. Sits down. Yawns. Every few minutes, a speech bubble pops up — sometimes random (*"~♪"*), sometimes surprisingly relevant (*"you've been coding since 9am... take a break?"*).
-
-You can pet it. Talk to it. Or just let it be.
+Every few minutes, a speech bubble pops up — sometimes random (*"~♪"*), sometimes surprisingly relevant (*"you've been coding since 9am... take a break?"*). You can pet it, talk to it, or just let it be.
 
 It's not an assistant. It's a roommate.
 
@@ -23,28 +32,28 @@ It's not an assistant. It's a roommate.
 
 <table>
 <tr>
-<td width="50%">
+<td width="50%" valign="top">
 
-**It sees what you see**
-Screen capture + Claude Vision — it knows if you're coding, designing, or doom-scrolling.
+**It sees what you see**<br/>
+<sub>Screen capture + Claude Vision — knows if you're coding, designing, or doom-scrolling.</sub>
 
-**It remembers you**
-A living memory that grows over time. Not a stateless chatbot.
+**It remembers you**<br/>
+<sub>A living memory that grows over time. Not a stateless chatbot.</sub>
 
-**It has personality**
-Sassy, chill, philosophical — you configure it. It knows when to shut up.
+**It has personality**<br/>
+<sub>Sassy, chill, philosophical — you configure it. Knows when to shut up.</sub>
 
 </td>
-<td width="50%">
+<td width="50%" valign="top">
 
-**It has feelings**
-Pet it and it purrs. Ignore it and it gets a little sad. It notices when you're around.
+**It has feelings**<br/>
+<sub>Pet it → purrs. Ignore it → sad. Neglect it → sick.</sub>
 
-**It keeps a diary**
-Plain Markdown files you can read — its own journal, what it saw on your screen, daily summaries.
+**It keeps a diary**<br/>
+<sub>Plain Markdown files — its journal, what it saw on your screen, daily summaries. You can read them.</sub>
 
-**100% local**
-All data stays on your machine. Nothing leaves your laptop.
+**100% local**<br/>
+<sub>All data stays on your machine. Nothing leaves your laptop.</sub>
 
 </td>
 </tr>
@@ -54,19 +63,23 @@ All data stays on your machine. Nothing leaves your laptop.
 
 ## Characters
 
+Pick your companion. Each has its own animations and voice.
+
 <p align="center">
-  <img src="assets/previews/tabby_cat.gif" width="128" alt="Tabby Cat" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/golden_retriever.gif" width="128" alt="Golden Retriever" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/blue_buddy.gif" width="128" alt="Blue Buddy" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/schnauzer.gif" width="128" alt="Schnauzer" />
+  <img src="assets/previews/tabby_cat.gif" width="100" alt="Tabby Cat" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/golden_retriever.gif" width="100" alt="Golden Retriever" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/blue_buddy.gif" width="100" alt="Blue Buddy" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/schnauzer.gif" width="100" alt="Schnauzer" />
 </p>
 <p align="center">
-  <sub><strong>Tabby Cat</strong> · <strong>Golden Retriever</strong> · <strong>Blue Buddy</strong> · <strong>Schnauzer</strong></sub><br/>
-  <sub>Want to add your own? See <a href="SPRITE-SPEC.md">Sprite Spec</a> — generate a spritesheet with any AI image tool, drop it in, done.</sub>
+  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer</sub><br/>
+  <sub><a href="SPRITE-SPEC.md">Create your own</a> with any AI image generator</sub>
 </p>
+
+---
 
 ## Quick Start
 
@@ -75,19 +88,32 @@ All data stays on your machine. Nothing leaves your laptop.
 You need [Node.js](https://nodejs.org/) (v18+), [Rust](https://rustup.rs/), and [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (for the AI brain).
 
 ```bash
-gh repo fork ryannli/tiny-roommate --clone
+gh repo fork ryannli/tinyroommate --clone
 cd tinyroommate
 npm install
 npx tauri dev
 ```
 
-This is meant to be *your* pet — fork it, customize it, make it weird. First launch compiles Rust (~2-3 min). After that it's instant.
+<details>
+<summary>Prerequisites</summary>
 
-> **No Claude Code?** The pet still runs — walks around, fidgets, reacts to clicks — but can't think, talk, or see your screen. Install Claude Code to unlock its full brain.
+- [Node.js](https://nodejs.org/) v18+
+- [Rust](https://rustup.rs/)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — for the AI brain (optional — pet still runs without it, just can't think or talk)
 
-### Linux Prerequisites
+</details>
 
-Before running for the first time, install Tauri's system dependencies and an emoji font:
+<details>
+<summary>Screen Recording permission (optional)</summary>
+
+For the pet to "see" your screen: **System Settings → Privacy & Security → Screen Recording** → enable your terminal app → restart terminal.
+
+Without this, everything still works — it just can't see what you're doing.
+
+</details>
+
+<details>
+<summary>Linux dependencies</summary>
 
 ```bash
 sudo apt-get install -y \
@@ -96,34 +122,35 @@ sudo apt-get install -y \
   fonts-noto-color-emoji
 ```
 
-### Screen Recording (optional, macOS)
+</details>
 
-For the pet to "see" your screen, grant permission in **System Settings > Privacy & Security > Screen Recording** for your terminal app, then restart.
+First launch compiles Rust (~2-3 min). After that it's instant.
 
-## How to Interact
+---
 
-| Action | What happens |
-|--------|-------------|
-| **Hold** mouse on pet | Pet it — it purrs |
-| **Click** | Tap for a quick reaction |
-| **Double-click** | Open chat |
-| **Drag** | Pick it up and move it around |
-| **Right-click** | Settings menu |
+## Interactions
+
+| | |
+|:--|:--|
+| **Hold** on pet | It purrs |
+| **Click** | Quick reaction |
+| **Double-click** | Chat |
+| **Drag** | Move it around |
+| **Right-click** | Settings |
 
 ## Make It Yours
 
-Right-click > **Settings** to change names and character. For deeper customization, edit `.pet-data/config.md`:
+Right-click → **Settings** to change names and character.
+
+For deeper customization, edit `.pet-data/config.md`:
 
 ```yaml
 ---
+pet_name: Cooper
 owner_name: Alex
 sprite: golden_retriever
 ---
-```
 
-Everything below the frontmatter is free-form instructions your pet reads every time it thinks:
-
-```markdown
 # Personality
 - Be sarcastic and dry
 - If I'm working past midnight, roast me
@@ -132,24 +159,23 @@ Everything below the frontmatter is free-form instructions your pet reads every 
 - Nudge me to take breaks every 30 min
 ```
 
-Changes take effect immediately.
+Your pet reads this every time it thinks. Changes take effect immediately.
 
 ## Its Memory
 
-Your pet keeps a journal in `.pet-data/` — all plain Markdown files you can read:
+All data lives in `.pet-data/` — plain Markdown you can read:
 
-| File | What's inside |
-|------|--------------|
-| `config.md` | Your preferences — edit this |
-| `me-journal.md` | Its personal diary |
-| `owner-memory.md` | What it's learned about you over time |
-| `owner-perceptions.md` | What it saw on your screen today |
-| `owner-timeline.md` | Daily activity summaries |
+| File | |
+|:-----|:--|
+| **config.md** | Your preferences — edit this |
+| **me-journal.md** | Its diary about life with you |
+| **owner-memory.md** | What it knows about you |
+| **owner-perceptions.md** | What it saw on your screen today |
+| **owner-timeline.md** | Daily activity summaries |
 
-## Built With
+---
 
-[Tauri v2](https://v2.tauri.app/) · Vanilla JS · [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (Haiku)
-
-## License
-
-MIT
+<p align="center">
+  <sub>Built with <a href="https://v2.tauri.app/">Tauri</a> · Vanilla JS · <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a></sub><br/>
+  <sub>MIT License</sub>
+</p>

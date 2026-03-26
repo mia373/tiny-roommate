@@ -253,7 +253,7 @@ export async function think(context) {
       '--print',
       '--output-format', 'text',
       '--model', 'haiku',
-      '--tools', 'Read',
+      '--tools', 'Read,Write,Edit',
       '--dangerously-skip-permissions',
       '-p', fullPrompt,
     ]);
