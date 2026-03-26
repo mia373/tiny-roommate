@@ -66,21 +66,15 @@ All data stays on your machine. Nothing leaves your laptop.
 Your pet reacts to what's happening — not randomly, but contextually.
 
 <table>
-<tr>
-<td align="center" width="33%"><img src="assets/states/work.gif" width="96" /><br/><sub><b>You're deep in code</b><br/>It works alongside you</sub></td>
-<td align="center" width="33%"><img src="assets/states/looking_around.gif" width="96" /><br/><sub><b>You switch apps</b><br/>It notices and observes</sub></td>
-<td align="center" width="33%"><img src="assets/states/playful.gif" width="96" /><br/><sub><b>You're watching YouTube</b><br/>It starts playing around</sub></td>
-</tr>
-<tr>
-<td align="center"><img src="assets/states/sleep.gif" width="96" /><br/><sub><b>It's past midnight</b><br/>"you should rest..." 💤</sub></td>
-<td align="center"><img src="assets/states/happy.gif" width="96" /><br/><sub><b>You pet it</b><br/>Affection +1, purrs</sub></td>
-<td align="center"><img src="assets/states/sad.gif" width="96" /><br/><sub><b>You've been away</b><br/>Hearts decay over time</sub></td>
-</tr>
-<tr>
-<td align="center"><img src="assets/states/walk.gif" width="96" /><br/><sub><b>Nothing happening</b><br/>It wanders your desktop</sub></td>
-<td align="center"><img src="assets/states/drag.gif" width="96" /><br/><sub><b>You drag it</b><br/>Swing physics, not amused</sub></td>
-<td align="center"><img src="assets/states/idle.gif" width="96" /><br/><sub><b>Just vibing</b><br/>Silence is often the right choice</sub></td>
-</tr>
+<tr><td width="80"><img src="assets/states/work.gif" width="72" /></td><td><b>You're deep in code</b> — It works alongside you</td></tr>
+<tr><td><img src="assets/states/looking_around.gif" width="72" /></td><td><b>You switch apps</b> — It notices and observes</td></tr>
+<tr><td><img src="assets/states/playful.gif" width="72" /></td><td><b>You're watching YouTube</b> — It starts playing around</td></tr>
+<tr><td><img src="assets/states/sleep.gif" width="72" /></td><td><b>It's past midnight</b> — "you should rest..." 💤</td></tr>
+<tr><td><img src="assets/states/happy.gif" width="72" /></td><td><b>You pet it</b> — Affection +1, purrs</td></tr>
+<tr><td><img src="assets/states/sad.gif" width="72" /></td><td><b>You've been away</b> — Hearts decay over time</td></tr>
+<tr><td><img src="assets/states/walk.gif" width="72" /></td><td><b>Nothing happening</b> — It wanders your desktop</td></tr>
+<tr><td><img src="assets/states/drag.gif" width="72" /></td><td><b>You drag it</b> — Swing physics, not amused</td></tr>
+<tr><td><img src="assets/states/idle.gif" width="72" /></td><td><b>Just vibing</b> — Silence is often the right choice</td></tr>
 </table>
 
 ## Characters
