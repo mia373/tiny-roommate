@@ -70,9 +70,8 @@ All data stays on your machine. Nothing leaves your laptop.
 
 You need [Node.js](https://nodejs.org/) (v18+), [Rust](https://rustup.rs/), and [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (for the AI brain).
 
-Click **Fork** at the top of this page to create your own copy, then clone it and run:
-
 ```bash
+gh repo fork ryannli/tinyroommate --clone
 cd tinyroommate
 npm install
 npx tauri dev
