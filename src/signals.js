@@ -104,18 +104,12 @@ export function isScreenRecordingDenied() {
   return screenRecordingDenied;
 }
 
-// Get active app name — TODO: implement with Tauri native plugin
-export async function getActiveApp() {
-  return null;
-}
-
 // Build context string for LLM
-export function buildContextString(timeSignals, idleSeconds, screenContext, activeApp) {
+export function buildContextString(timeSignals, idleSeconds, screenContext) {
   const parts = [];
   parts.push('Time: ' + timeSignals.time + ' (' + timeSignals.timeOfDay + ', ' + timeSignals.dayOfWeek + ')');
   if (timeSignals.isWeekend) parts.push('It is the weekend.');
   if (idleSeconds > 60) parts.push('User has been idle for ' + Math.floor(idleSeconds / 60) + ' minutes.');
-  if (activeApp) parts.push('Active app: ' + activeApp);
   if (screenContext) parts.push('What I see on screen: ' + screenContext);
   return parts.join('\n');
 }

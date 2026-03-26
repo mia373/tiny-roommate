@@ -3,7 +3,7 @@
 import { Command } from '@tauri-apps/plugin-shell';
 import { STATES } from './sprite.js';
 import { getTimeSignals, getIdleSeconds, captureScreenContext, buildContextString, isScreenRecordingDenied } from './signals.js';
-import { think, getActivityLog, generateDailyDigest, loadConfig, ensurePetDataPath } from './brain.js';
+import { think, getActivityLog, generateDailyDigest, loadConfig, ensurePetDataPath, checkClaudeCli, isClaudeAvailable } from './brain.js';
 
 var WALK_SPEED = 50;
 var SCREEN_MARGIN = 30;
@@ -18,7 +18,7 @@ function shellQuote(value) { return "'" + String(value).replace(/'/g, `'\\''`) +
 export function initBehavior(pet) {
 
   // =========================================================================
-  // PERCEPTION LAYER — persisted to .tinyroommate/owner-perceptions.md
+  // PERCEPTION LAYER — persisted to .pet-data/owner-perceptions.md
   // =========================================================================
   var lastPerceptionDate = null; // track date for daily rollover
   var screenPermissionNudged = false;
@@ -281,9 +281,24 @@ export function initBehavior(pet) {
       pet.sprite.image.src = '/sprites/' + pet.currentSprite + '.png';
     }
 
+    // Check if Claude CLI is available
+    var hasClaude = await checkClaudeCli();
+
     pet.sprite.setState('happy');
     pet.showBubble('hey! i\'m ' + pet.petName + ' ' + pet.voice().greet, 3000);
     await sleep(3500);
+
+    if (!hasClaude) {
+      pet.sprite.setState('sad');
+      pet.showBubble('i can\'t find Claude Code on this machine... i\'ll hang out but i can\'t think or see your screen without it 🥺', 8000);
+      await sleep(8500);
+      pet.showBubble('install Claude Code (claude.ai/claude-code) and restart me to unlock my full brain!', 6000);
+      await sleep(6500);
+      returnToBase();
+      // Offline mode: only fidget animations, no LLM/perception
+      scheduleFidget();
+      return;
+    }
 
     pet.sprite.setState('looking_around');
     pet.showBubble('*looks around*...', 2000);
@@ -298,7 +313,7 @@ export function initBehavior(pet) {
     }
 
     var timeSignals = getTimeSignals();
-    var context = buildContextString(timeSignals, 0, screenContext, null);
+    var context = buildContextString(timeSignals, 0, screenContext);
     var result = await think(
       "You just appeared on your owner's desktop for the very first time. Look around and comment on what you see. This is your first impression. Be cute and observant.\n\nEnvironment:\n" + context
     );

@@ -64,10 +64,12 @@ STYLE: [e.g. "cute, photo-realistic" or "pixel art" or "chibi anime"]
 
 ## Processing
 
+V4 is the canonical sprite-sheet cleanup pipeline for TinyRoommate.
+
 After generating, run:
 
 ```bash
-python3 scripts/process-spritesheet-v3.py input.png \
+python3 scripts/process-spritesheet-v4.py input.png \
   -o public/sprites/your_character.png \
   --cols 8 --rows 9 --target 128
 ```

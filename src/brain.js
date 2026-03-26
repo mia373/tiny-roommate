@@ -151,7 +151,7 @@ export function logActivity(entry) {
   if (activityLog.length > 50) activityLog.shift();
 
   const description = entry.description || entry.type || '';
-  if (description) {
+  if (description && claudeAvailable) {
     claudeInPetDir([
       '--print', '--output-format', 'text', '--model', 'haiku',
       '--tools', 'Write,Edit', '--dangerously-skip-permissions',
@@ -166,7 +166,7 @@ export function getActivityLog() {
 
 // --- LLM response parsing ---
 
-function parseResponse(raw) {
+export function parseResponse(raw) {
   let state = 'idle';
   let reactions = [];
 
@@ -217,6 +217,23 @@ function parseResponse(raw) {
 
 // --- Claude CLI ---
 
+var claudeAvailable = null; // null = unchecked, true/false after check
+
+export async function checkClaudeCli() {
+  if (claudeAvailable !== null) return claudeAvailable;
+  try {
+    var result = await Command.create('claude', ['--version']).execute();
+    claudeAvailable = result.code === 0;
+  } catch {
+    claudeAvailable = false;
+  }
+  return claudeAvailable;
+}
+
+export function isClaudeAvailable() {
+  return claudeAvailable === true;
+}
+
 function claudeInPetDir(args) {
   return ensurePetDataPath().then(function(petDataPath) {
     return Command.create('claude', args, { cwd: petDataPath }).execute();
@@ -224,6 +241,8 @@ function claudeInPetDir(args) {
 }
 
 export async function think(context) {
+  if (!claudeAvailable) return null;
+
   const recentActivity = activityLog.length > 0
     ? '\nRecent activity log:\n' + activityLog.slice(-5).map(a => '- ' + a.time + ': ' + (a.description || a.type)).join('\n')
     : '';
@@ -257,7 +276,7 @@ export async function think(context) {
 // --- Daily digest ---
 
 export async function generateDailyDigest() {
-  if (activityLog.length < 3) return null;
+  if (!claudeAvailable || activityLog.length < 3) return null;
 
   const logText = activityLog.map(a => `${a.time}: ${a.description || a.type}`).join('\n');
   const petName = config.pet.name || 'Mochi';

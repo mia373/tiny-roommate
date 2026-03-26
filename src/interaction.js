@@ -10,8 +10,6 @@ var SWING_SPRING = 0.15;
 var SWING_FACTOR = 0.12;
 var SWING_MAX = 25;
 
-function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
-
 export function initInteraction(pet) {
   var canvas = pet.canvas;
   var mouseDownPos = null;
@@ -194,7 +192,7 @@ export function initInteraction(pet) {
     }
     pet.llmBusy = true;
     var timeSignals = getTimeSignals();
-    var context = buildContextString(timeSignals, getIdleSeconds(), pet.lastScreenContext, null);
+    var context = buildContextString(timeSignals, getIdleSeconds(), pet.lastScreenContext);
     var result = await think("Your owner tapped you to get your attention. React briefly.\n\nEnvironment:\n" + context);
     if (result) {
       pet.showBubble(result.text, Math.max(6000, result.text.length * 200), true, result.reactions);
@@ -230,7 +228,7 @@ export function initInteraction(pet) {
       pet.showBubble(thinkingLines[Math.floor(Math.random() * thinkingLines.length)], 30000);
 
       var timeSignals = getTimeSignals();
-      var context = buildContextString(timeSignals, getIdleSeconds(), pet.lastScreenContext, null);
+      var context = buildContextString(timeSignals, getIdleSeconds(), pet.lastScreenContext);
       var result = await think('Your owner said to you: "' + text + '"\n\nEnvironment:\n' + context + '\n\nRespond naturally.');
 
       if (result) {

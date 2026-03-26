@@ -8,3 +8,5 @@ public/sprites/cat_transparent.png
 package-lock.json
 .pet-data/
 .claude/settings.local.json
+CLAUDE.md
+docs/

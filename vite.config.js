@@ -3,6 +3,13 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   clearScreen: false,
+  test: {
+    server: {
+      deps: {
+        inline: ['@tauri-apps/plugin-shell', '@tauri-apps/api'],
+      },
+    },
+  },
   build: {
     rollupOptions: {
       input: {
