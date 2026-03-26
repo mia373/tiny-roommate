@@ -61,6 +61,25 @@ All data stays on your machine. Nothing leaves your laptop.
 
 <br/>
 
+## Characters
+
+Pick a companion — or **make your own**.
+
+<p align="center">
+  <img src="assets/previews/tabby_cat.gif" width="120" alt="Tabby Cat" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/golden_retriever.gif" width="120" alt="Golden Retriever" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/blue_buddy.gif" width="120" alt="Blue Buddy" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/schnauzer.gif" width="120" alt="Schnauzer" />
+</p>
+<p align="center">
+  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer</sub>
+</p>
+
+Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for details.
+
 ## A Day in Its Life
 
 Your pet reacts to what's happening — not randomly, but contextually.
@@ -84,25 +103,6 @@ Your pet reacts to what's happening — not randomly, but contextually.
 </tr>
 </table>
 </div>
-
-## Characters
-
-Pick a companion — or **make your own**.
-
-<p align="center">
-  <img src="assets/previews/tabby_cat.gif" width="120" alt="Tabby Cat" />
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/golden_retriever.gif" width="120" alt="Golden Retriever" />
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/blue_buddy.gif" width="120" alt="Blue Buddy" />
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/schnauzer.gif" width="120" alt="Schnauzer" />
-</p>
-<p align="center">
-  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer</sub>
-</p>
-
-Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for details.
 
 ---
 
