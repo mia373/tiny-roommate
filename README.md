@@ -26,7 +26,7 @@ You open the app. A small cat appears on your desktop. It walks around, sits dow
 
 Every few minutes, a speech bubble pops up — sometimes random (*"~♪"*), sometimes surprisingly relevant (*"you've been coding since 9am... take a break?"*). You can pet it, talk to it, or just let it be.
 
-It's not an assistant. It's a roommate.
+<p align="center"><strong><em>It's not an assistant. It's a roommate.</em></strong></p>
 
 <br/>
 
