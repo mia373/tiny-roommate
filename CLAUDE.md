@@ -31,8 +31,8 @@ Runtime pet memory — NOT checked into git. Structure:
 ```
 .pet-data/
   CLAUDE.md              # Brain instructions (system prompt for Claude CLI)
-  config.md              # Owner preferences (frontmatter: owner_name, sprite)
-  me-identity.md         # Pet identity (frontmatter: name, species, born)
+  config.md              # Owner preferences (frontmatter: pet_name, owner_name, sprite, born)
+  me-identity.md         # Pet's self-description (written by the pet)
   me-journal.md          # Pet's diary
   owner-memory.md        # Accumulated knowledge about owner
   owner-perceptions.md   # Screen captures (updated every 2 min)

@@ -1,6 +1,5 @@
 ---
 pet_name: Mochi
-species: Cat
 owner_name:
 sprite: tabby_cat
 born:

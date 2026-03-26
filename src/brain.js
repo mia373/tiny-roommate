@@ -17,7 +17,7 @@ async function resolvePetDataPaths() {
 
 // Structured config loaded from frontmatter
 let config = {
-  pet: { name: 'Mochi', species: 'Cat', born: '' },
+  pet: { name: 'Mochi', born: '' },
   owner: { name: '' },
   sprite: 'tabby_cat',
 };
@@ -33,7 +33,8 @@ async function runShell(script) {
 async function seedPetDataIfNeeded(projectRoot) {
   var dataPath = shellQuote(projectRoot + '/.pet-data');
   var templatePath = shellQuote(projectRoot + '/.pet-data-template');
-  var today = new Date().toISOString().slice(0, 10);
+  var now = new Date();
+  var today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   // If .pet-data doesn't exist, copy from template and stamp born date
   await runShell(
     '[ -d ' + dataPath + ' ] || { cp -R ' + templatePath + ' ' + dataPath +
@@ -101,7 +102,6 @@ export async function loadConfig() {
   if (configRaw) {
     const { fields } = parseFrontmatter(configRaw);
     if (fields.pet_name) config.pet.name = fields.pet_name;
-    if (fields.species) config.pet.species = fields.species;
     if (fields.born) config.pet.born = fields.born;
     if (fields.owner_name) config.owner.name = fields.owner_name;
     if (fields.sprite) config.sprite = fields.sprite;
@@ -118,7 +118,6 @@ export async function saveConfigField(key, value) {
 
   // Update in-memory config
   if (key === 'pet_name') config.pet.name = value;
-  if (key === 'species') config.pet.species = value;
   if (key === 'born') config.pet.born = value;
   if (key === 'owner_name') config.owner.name = value;
   if (key === 'sprite') config.sprite = value;
@@ -168,25 +167,49 @@ export function getActivityLog() {
 // --- LLM response parsing ---
 
 function parseResponse(raw) {
-  const lines = raw.split('\n');
-  let text = '';
   let state = 'idle';
   let reactions = [];
 
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed === '```json' || trimmed === '```') continue;
-
-    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+  // Extract JSON from anywhere in the output (handles reasoning/commentary around it)
+  var jsonMatch = raw.match(/\{[\s\S]*?\}/g);
+  if (jsonMatch) {
+    for (var i = jsonMatch.length - 1; i >= 0; i--) {
       try {
-        const parsed = JSON.parse(trimmed);
-        if (parsed.state) state = parsed.state;
-        if (parsed.r && Array.isArray(parsed.r)) reactions = parsed.r.slice(0, 2);
-        continue;
+        var parsed = JSON.parse(jsonMatch[i]);
+        if (parsed.state) {
+          state = parsed.state;
+          if (parsed.r && Array.isArray(parsed.r)) reactions = parsed.r.slice(0, 2);
+          // Remove the JSON from the raw text to get dialogue only
+          raw = raw.replace(jsonMatch[i], '');
+          break;
+        }
       } catch {}
     }
+  }
 
-    if (trimmed) text += (text ? ' ' : '') + trimmed;
+  // Extract dialogue: strip markdown, code blocks, tool artifacts, reasoning
+  var text = raw
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/\*\*[\w]+:\*\*/g, '')        // **Dialogue:** etc.
+    .replace(/\*[^*]+\*/g, '')             // *actions*
+    .replace(/<[^>]+>[\s\S]*?<\/[^>]+>/g, '') // XML tags
+    .split('\n')
+    .map(function(l) { return l.trim(); })
+    .filter(function(l) {
+      if (!l) return false;
+      // Skip lines that look like reasoning, not dialogue
+      if (l.startsWith('I\'ve read') || l.startsWith('I need to') || l.startsWith('Given') || l.startsWith('This is a')) return false;
+      if (l.startsWith('Here\'s') || l.startsWith('Let me') || l.startsWith('Based on')) return false;
+      if (l.match(/^(Read|read|The |As |Since |Looking|Checking)/)) return false;
+      return true;
+    })
+    .join(' ')
+    .trim();
+
+  // If still too long, take just the first sentence
+  if (text.length > 80) {
+    var firstSentence = text.match(/^[^.!?]+[.!?]/);
+    if (firstSentence) text = firstSentence[0].trim();
   }
 
   return { text, state, reactions };
@@ -213,7 +236,7 @@ export async function think(context) {
       '--print',
       '--output-format', 'text',
       '--model', 'haiku',
-      '--tools', 'Read,Edit,Write',
+      '--tools', 'Read',
       '--dangerously-skip-permissions',
       '-p', fullPrompt,
     ]);

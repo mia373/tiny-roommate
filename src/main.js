@@ -1,6 +1,6 @@
 // TinyRoommate — Main Entry Point
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { SpriteAnimator } from './sprite.js';
+import { SpriteAnimator, getSpriteRenderOptions } from './sprite.js';
 import { trackActivity } from './signals.js';
 import { loadConfig } from './brain.js';
 import { voice } from './characters.js';
@@ -33,7 +33,11 @@ var pet = {
   voice: function() { return voice(pet); },
 };
 
-pet.sprite = new SpriteAnimator(pet.canvas, '/sprites/' + pet.currentSprite + '.png');
+pet.sprite = new SpriteAnimator(
+  pet.canvas,
+  '/sprites/' + pet.currentSprite + '.png',
+  getSpriteRenderOptions(pet.currentSprite)
+);
 trackActivity();
 
 // Init modules
@@ -64,6 +68,7 @@ loadConfig().then(function(cfg) {
   if (cfg.sprite && cfg.sprite !== pet.currentSprite) {
     pet.currentSprite = cfg.sprite;
     pet.sprite.image.src = '/sprites/' + pet.currentSprite + '.png';
+    pet.sprite.edgeClear = getSpriteRenderOptions(pet.currentSprite).edgeClear || 0;
   }
   document.getElementById('chat-input').placeholder = 'Say something to ' + pet.petName + '...';
 });

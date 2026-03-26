@@ -15,6 +15,26 @@ var PREVIEW_SEQUENCE = [
   { state: 'playful', duration: 1500 },
 ];
 
+function buildSpritePicker(container) {
+  Object.keys(CHARACTERS).forEach(function(key) {
+    if (key === '_default') return;
+    var char = CHARACTERS[key];
+    var btn = document.createElement('button');
+    btn.className = 'sprite-option';
+    btn.dataset.sprite = key;
+    var cvs = document.createElement('canvas');
+    cvs.className = 'sprite-preview';
+    cvs.dataset.src = '/sprites/' + key + '.png';
+    cvs.width = 128;
+    cvs.height = 128;
+    var span = document.createElement('span');
+    span.textContent = char.displayName || key;
+    btn.appendChild(cvs);
+    btn.appendChild(span);
+    container.appendChild(btn);
+  });
+}
+
 export function initSettings(pet) {
   var contextMenu = document.getElementById('context-menu');
   var settingsOverlay = document.getElementById('settings-overlay');
@@ -22,6 +42,9 @@ export function initSettings(pet) {
   var normalPos = null;
   var previewAnimId = null;
   var previewAnimators = [];
+
+  // Build sprite picker from CHARACTERS data
+  buildSpritePicker(document.getElementById('sprite-options'));
 
   // --- Right-click context menu ---
   document.addEventListener('contextmenu', function(e) {
@@ -192,11 +215,10 @@ export function initSettings(pet) {
         pet.sprite.edgeClear = getSpriteRenderOptions(spriteName).edgeClear || 0;
         saveConfigField('sprite', spriteName);
 
-        // Update name & species to match character
+        // Update name to match character
         var charInfo = CHARACTERS[spriteName] || CHARACTERS._default;
         pet.petName = charInfo.defaultName;
         saveConfigField('pet_name', charInfo.defaultName);
-        saveConfigField('species', charInfo.species);
         document.getElementById('setting-pet-name').value = charInfo.defaultName;
         document.getElementById('chat-input').placeholder = 'Say something to ' + pet.petName + '...';
 
