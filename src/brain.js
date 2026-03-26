@@ -110,17 +110,26 @@ export async function loadConfig() {
   return { ...config, pet: { ...config.pet }, owner: { ...config.owner } };
 }
 
-export async function saveConfigField(key, value) {
-  const raw = await readPetFile('config.md');
-  const { fields, body } = parseFrontmatter(raw);
-  fields[key] = value;
-  await writePetFile('config.md', serializeFrontmatter(fields, body));
+var configWriteQueue = Promise.resolve();
 
-  // Update in-memory config
+export function saveConfigField(key, value) {
+  // Update in-memory config immediately
   if (key === 'pet_name') config.pet.name = value;
   if (key === 'born') config.pet.born = value;
   if (key === 'owner_name') config.owner.name = value;
   if (key === 'sprite') config.sprite = value;
+
+  // Queue file writes so concurrent calls don't clobber each other
+  configWriteQueue = configWriteQueue.then(async function() {
+    const raw = await readPetFile('config.md');
+    const { fields, body } = parseFrontmatter(raw);
+    fields[key] = value;
+    await writePetFile('config.md', serializeFrontmatter(fields, body));
+  }).catch(function(err) {
+    console.error('Failed to save config field ' + key + ':', err);
+  });
+
+  return configWriteQueue;
 }
 
 export function getConfig() {
@@ -190,8 +199,8 @@ export function parseResponse(raw) {
   // Extract dialogue: strip markdown, code blocks, tool artifacts, reasoning
   var text = raw
     .replace(/```[\s\S]*?```/g, '')
-    .replace(/\*\*[\w]+:\*\*/g, '')        // **Dialogue:** etc.
-    .replace(/\*[^*]+\*/g, '')             // *actions*
+    .replace(/\*\*([^*]+)\*\*/g, '$1')      // **bold** → bold
+    .replace(/\*([^*]+)\*/g, '$1')         // *italic/actions* → text
     .replace(/<[^>]+>[\s\S]*?<\/[^>]+>/g, '') // XML tags
     .split('\n')
     .map(function(l) { return l.trim(); })

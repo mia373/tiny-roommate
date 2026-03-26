@@ -36,9 +36,10 @@ describe('parseResponse', () => {
   });
 
   it('strips action asterisks', () => {
-    var raw = '*looks around* oh nice!';
+    var raw = 'hey *looks around* oh nice!';
     var result = parseResponse(raw);
-    expect(result.text).toBe('oh nice!');
+    expect(result.text).not.toContain('*');
+    expect(result.text).toContain('oh nice');
   });
 
   it('truncates long text to first sentence', () => {

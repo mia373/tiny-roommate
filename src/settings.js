@@ -213,14 +213,15 @@ export function initSettings(pet) {
         pet.currentSprite = spriteName;
         pet.sprite.image.src = '/sprites/' + spriteName + '.png';
         pet.sprite.edgeClear = getSpriteRenderOptions(spriteName).edgeClear || 0;
-        saveConfigField('sprite', spriteName);
 
         // Update name to match character
         var charInfo = CHARACTERS[spriteName] || CHARACTERS._default;
         pet.petName = charInfo.defaultName;
-        saveConfigField('pet_name', charInfo.defaultName);
         document.getElementById('setting-pet-name').value = charInfo.defaultName;
         document.getElementById('chat-input').placeholder = 'Say something to ' + pet.petName + '...';
+
+        saveConfigField('sprite', spriteName);
+        saveConfigField('pet_name', charInfo.defaultName);
 
         pet.showBubble('call me ' + charInfo.defaultName + '!', 2000, true);
       }
