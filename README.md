@@ -135,6 +135,37 @@ Your pet keeps a memory in `.pet-data/` — all plain Markdown files you can rea
 | `owner-perceptions.md` | What it saw on your screen today |
 | `owner-timeline.md` | Daily activity summaries over time |
 
+## Add a Character
+
+1. Generate a spritesheet following [SPRITE-SPEC.md](SPRITE-SPEC.md) and process it:
+
+   ```bash
+   python3 scripts/process-spritesheet-v3.py your_character.png \
+     -o public/sprites/your_character.png \
+     --cols 8 --rows 9 --target 128
+   ```
+
+2. Add an entry to `src/characters.js`:
+
+   ```js
+   // In CHARACTERS:
+   your_character: { defaultName: 'Name', displayName: 'Your Character' },
+
+   // In VOICE:
+   your_character: {
+     greet: '👋',
+     acks: ['~♪', '😊', 'hehe', 'hey!', '💛'],
+     petHold: 'hehe~ 😊',
+     petLines: ['hehe~', 'more...', 'nice~ 😊', "don't stop~"],
+     petFallback: 'hehe~ 😊',
+     tapLines: ['hm?', '!', 'hey?', '~'],
+     tapFallback: 'hey?',
+     chatFallback: 'hmm?',
+   },
+   ```
+
+That's it — the character picker UI is generated automatically.
+
 ## License
 
 MIT
