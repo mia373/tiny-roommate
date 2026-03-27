@@ -75,24 +75,24 @@ python3 -m pip install --user pillow numpy
 After generating, run:
 
 ```bash
-python3 scripts/process-spritesheet-v4.py path/to/coco-source.png \
-  -o public/sprites/coco.png \
+python3 scripts/process-spritesheet-v4.py path/to/your-character-source.png \
+  -o public/sprites/your_character.png \
   --cols 8 --rows 9 --target 128
 ```
 
 Then generate the preview assets used by the README:
 
 ```bash
-python3 scripts/generate-preview-gif.py public/sprites/coco.png \
-  -o assets/previews/coco.gif \
-  --still-output assets/previews/coco.png
+python3 scripts/generate-preview-gif.py public/sprites/your_character.png \
+  -o assets/previews/your_character.gif \
+  --still-output assets/previews/your_character.png
 ```
 
 That gives you the two files the repo convention uses:
 
-- `public/sprites/coco.png`: the in-app spritesheet
-- `assets/previews/coco.gif`: animated preview for docs
-- `assets/previews/coco.png`: still preview image
+- `public/sprites/your_character.png`: the in-app spritesheet
+- `assets/previews/your_character.gif`: animated preview for docs
+- `assets/previews/your_character.png`: still preview image
 
 ## Register Your Character
 
@@ -100,19 +100,19 @@ Add an entry to `src/characters.js`:
 
 ```js
 // In CHARACTERS:
-coco: { defaultName: 'Coco', displayName: 'Coco' },
+your_character: { defaultName: 'Name', displayName: 'Your Character' },
 
 // In VOICE:
-coco: {
-  greet: '🐶',
-  acks: ['~♪', '😊', 'hehe', 'woof!', '🩷'],
-  petHold: 'tail wagging intensifies~ 😊',
-  petLines: ['more pets~', 'play with me?', 'best day ever~ 😊', "don't stop~"],
-  petFallback: '*happy panting* 😊',
-  tapLines: ['hm?', '!', 'woof?', '~'],
-  tapFallback: 'woof?',
-  chatFallback: 'woof?',
+your_character: {
+  greet: '👋',
+  acks: ['~♪', '😊', 'hehe', 'hey!', '💛'],
+  petHold: 'hehe~ 😊',
+  petLines: ['hehe~', 'more...', 'nice~ 😊', "don't stop~"],
+  petFallback: 'hehe~ 😊',
+  tapLines: ['hm?', '!', 'hey?', '~'],
+  tapFallback: 'hey?',
+  chatFallback: 'hmm?',
 },
 ```
 
-The character picker UI is generated automatically from this file. Once `public/sprites/coco.png` exists, `Coco` appears in Settings automatically.
+The character picker UI is generated automatically from this file. Once `public/sprites/your_character.png` exists, your character appears in Settings automatically.
