@@ -70,9 +70,11 @@ Pick a companion — or **make your own**.
   <img src="assets/previews/blue_buddy.gif" width="120" alt="Blue Buddy" />
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="assets/previews/schnauzer.gif" width="120" alt="Schnauzer" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/tuxedo_cat.gif" width="120" alt="Tuxedo Cat" />
 </p>
 <p align="center">
-  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer</sub>
+  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer · Tuxedo Cat</sub>
 </p>
 
 Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for details.
