@@ -80,20 +80,7 @@ Pick a companion — or **make your own**.
 </p>
 
 Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for details.
-
-To add a new pet like `Coco`, the repo convention is:
-
-```bash
-python3 -m pip install --user pillow numpy
-python3 scripts/process-spritesheet-v4.py path/to/coco-source.png \
-  -o public/sprites/coco.png \
-  --cols 8 --rows 9 --target 128
-python3 scripts/generate-preview-gif.py public/sprites/coco.png \
-  -o assets/previews/coco.gif \
-  --still-output assets/previews/coco.png
-```
-
-Then register `coco` in `src/characters.js`. The Settings picker is generated from that file automatically.
+For the repo-specific cleanup and registration steps, see **[Sprite Pipeline](SPRITE-PIPELINE.md)**.
 
 ## A Day in Its Life
 
@@ -134,18 +121,7 @@ npm install
 npm run tauri:dev
 ```
 
-`npm run tauri:dev` picks an open port automatically.
-If you want to force a specific port, set `TAURI_DEV_PORT`:
-
-```bash
-TAURI_DEV_PORT=5180 npm run tauri:dev
-```
-
-If you are only running the frontend without Tauri, `npm run dev` also accepts a fixed port through `PORT`:
-
-```bash
-PORT=5180 npm run dev
-```
+`npm run tauri:dev` picks an open port automatically. Set `TAURI_DEV_PORT=5180` to pin Tauri dev to a specific port, or `PORT=5180` when running the frontend without Tauri.
 
 <details>
 <summary>Prerequisites</summary>
