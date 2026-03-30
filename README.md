@@ -138,11 +138,11 @@ npm run tauri:dev
 </details>
 
 <details>
-<summary>Screen Recording permission (optional)</summary>
+<summary>Screen Recording permission (needed for screen-aware behavior)</summary>
 
 For the pet to "see" your screen: **System Settings → Privacy & Security → Screen Recording** → enable your terminal app → restart terminal.
 
-Without this, everything still works — it just can't see what you're doing.
+Without this, TinyRoommate still runs, talks, and reacts — it just can't see what you're doing or make screen-aware observations.
 
 </details>
 
