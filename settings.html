@@ -306,14 +306,25 @@
   .import-file-btn input[type="file"] { display: none; }
 
   .import-status {
-    margin-top: 8px;
-    font: 12px/1.4 'SF Pro Rounded', system-ui, sans-serif;
-    color: rgba(150, 110, 80, 0.6);
+    margin-top: 12px;
+    padding: 10px 14px;
+    font: 600 13px/1.4 'SF Pro Rounded', system-ui, sans-serif;
+    color: rgba(150, 110, 80, 0.7);
     text-align: center;
     min-height: 18px;
+    border-radius: 10px;
   }
-  .import-status.error { color: rgba(200, 80, 60, 0.8); }
-  .import-status.success { color: rgba(80, 160, 80, 0.8); }
+  .import-status.processing {
+    background: rgba(220, 170, 130, 0.12);
+    color: rgba(170, 120, 70, 0.85);
+    animation: pulse-status 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-status {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .import-status.error { color: rgba(200, 80, 60, 0.8); background: rgba(200, 80, 60, 0.08); }
+  .import-status.success { color: rgba(80, 160, 80, 0.8); background: rgba(80, 160, 80, 0.08); }
 </style>
 </head>
 <body>

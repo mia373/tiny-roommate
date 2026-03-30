@@ -263,8 +263,8 @@ importFileInput.addEventListener('change', async function() {
 
   var displayName = importNameInput.value.trim() || 'Custom Character';
   importFileBtn.disabled = true;
-  importStatus.textContent = 'Processing sprite sheet...';
-  importStatus.className = 'import-status';
+  importStatus.textContent = 'Processing sprite sheet\u2026 this may take a moment';
+  importStatus.className = 'import-status processing';
 
   try {
     var result = await importCustomSprite(file, displayName);
