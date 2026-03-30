@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { lstat, readFile, readlink } from 'node:fs/promises';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock Tauri shell plugin before importing brain
@@ -163,5 +163,17 @@ describe('template config defaults', () => {
   it('does not hard-code a default pet scale in the template', async () => {
     var text = await readFile(process.cwd() + '/.pet-data-template/config.md', 'utf8');
     expect(text).not.toContain('pet_scale: 1.5');
+  });
+});
+
+describe('pet prompt template files', () => {
+  it('keeps CLAUDE.md and GEMINI.md as symlinks to AGENTS.md', async () => {
+    var claudePath = process.cwd() + '/.pet-data-template/CLAUDE.md';
+    var geminiPath = process.cwd() + '/.pet-data-template/GEMINI.md';
+
+    expect((await lstat(claudePath)).isSymbolicLink()).toBe(true);
+    expect((await lstat(geminiPath)).isSymbolicLink()).toBe(true);
+    expect(await readlink(claudePath)).toBe('AGENTS.md');
+    expect(await readlink(geminiPath)).toBe('AGENTS.md');
   });
 });

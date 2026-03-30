@@ -155,7 +155,16 @@ async function seedPetDataIfNeeded(projectRoot) {
     ' && perl -i -pe ' + shellQuote('s/^born:.*/born: ' + timestamp + '/') + ' ' + dataPath + '/config.md; }'
   );
   await runShell(
-    '[ -f ' + dataPath + '/GEMINI.md ] || cp ' + dataPath + '/CLAUDE.md ' + dataPath + '/GEMINI.md'
+    '[ -f ' + dataPath + '/AGENTS.md ] || { ' +
+    '[ -f ' + dataPath + '/CLAUDE.md ] && cp ' + dataPath + '/CLAUDE.md ' + dataPath + '/AGENTS.md || ' +
+    '[ -f ' + dataPath + '/GEMINI.md ] && cp ' + dataPath + '/GEMINI.md ' + dataPath + '/AGENTS.md || ' +
+    'cp ' + templatePath + '/AGENTS.md ' + dataPath + '/AGENTS.md; }'
+  );
+  await runShell(
+    '[ -e ' + dataPath + '/CLAUDE.md ] || ln -sf AGENTS.md ' + dataPath + '/CLAUDE.md'
+  );
+  await runShell(
+    '[ -e ' + dataPath + '/GEMINI.md ] || ln -sf AGENTS.md ' + dataPath + '/GEMINI.md'
   );
 }
 
