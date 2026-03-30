@@ -4,7 +4,10 @@
   "description": "enables the default permissions",
   "windows": [
     "main",
-    "bubble"
+    "bubble",
+    "settings",
+    "context-menu",
+    "chat"
   ],
   "permissions": [
     "core:default",

@@ -114,6 +114,7 @@
     font: 13px/1 'SF Pro Rounded', system-ui, sans-serif;
     color: #4a3830;
     min-height: 156px;
+    position: relative;
   }
   .sprite-option:hover { background: rgba(220, 170, 130, 0.1); }
   .sprite-option.active {
@@ -122,6 +123,22 @@
     font-weight: 600;
   }
   .sprite-option canvas { width: 104px; height: 104px; image-rendering: auto; }
+  .sprite-delete {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 20px; height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(200, 100, 80, 0.15);
+    color: rgba(200, 100, 80, 0.6);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .sprite-option:hover .sprite-delete { opacity: 1; }
+  .sprite-delete:hover { background: rgba(200, 100, 80, 0.3); color: rgba(200, 80, 60, 0.9); }
   .provider-options {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -157,6 +174,146 @@
     font: 12px/1.45 'SF Pro Rounded', system-ui, sans-serif;
     color: rgba(90, 65, 50, 0.72);
   }
+
+  /* Import button */
+  .import-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 12px;
+    border: 2px dashed rgba(200, 160, 120, 0.3);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: none;
+    text-align: center;
+    font: 13px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: rgba(150, 110, 80, 0.5);
+    min-height: 156px;
+  }
+  .import-btn:hover { border-color: rgba(220, 150, 110, 0.5); background: rgba(220, 170, 130, 0.08); color: rgba(150, 110, 80, 0.7); }
+  .import-btn .import-icon { font-size: 32px; opacity: 0.5; }
+
+  /* Modal overlay */
+  .import-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .import-modal-overlay.show { display: flex; }
+  .import-modal {
+    background: rgba(255, 252, 248, 0.98);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 480px;
+    width: calc(100% - 40px);
+    max-height: calc(100% - 40px);
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+  .import-modal h3 {
+    font: 600 16px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: #3d2b22;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .import-modal h3 button {
+    width: 24px; height: 24px;
+    border: none; background: none;
+    font-size: 16px; color: #9a7a6a;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .import-modal h3 button:hover { background: rgba(200, 160, 120, 0.15); }
+  .import-step {
+    margin-bottom: 16px;
+  }
+  .import-step-label {
+    font: 500 12px/1.4 'SF Pro Rounded', system-ui, sans-serif;
+    color: rgba(150, 110, 80, 0.7);
+    margin-bottom: 8px;
+  }
+  .prompt-box {
+    background: rgba(255, 248, 230, 0.8);
+    border: 1px solid rgba(200, 160, 120, 0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font: 12px/1.5 'SF Mono', 'Menlo', monospace;
+    color: #3d2b22;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .copy-btn {
+    margin-top: 8px;
+    padding: 6px 14px;
+    border: 1px solid rgba(200, 160, 120, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    font: 12px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: #5a3d2e;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .copy-btn:hover { background: rgba(255, 230, 200, 0.4); border-color: rgba(200, 140, 100, 0.5); }
+  .copy-btn.copied { color: rgba(80, 160, 80, 0.8); border-color: rgba(80, 160, 80, 0.3); }
+
+  .import-name-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .import-name-row input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1.5px solid rgba(200, 160, 120, 0.25);
+    border-radius: 10px;
+    font: 13px 'SF Pro Rounded', system-ui, sans-serif;
+    color: #3d2b22;
+    background: rgba(255, 255, 255, 0.7);
+    outline: none;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .import-name-row input:focus { border-color: rgba(220, 140, 90, 0.5); }
+
+  .import-file-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(220, 160, 110, 0.85), rgba(200, 130, 90, 0.85));
+    font: 600 14px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+  .import-file-btn:hover { filter: brightness(1.05); }
+  .import-file-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+  .import-file-btn input[type="file"] { display: none; }
+
+  .import-status {
+    margin-top: 8px;
+    font: 12px/1.4 'SF Pro Rounded', system-ui, sans-serif;
+    color: rgba(150, 110, 80, 0.6);
+    text-align: center;
+    min-height: 18px;
+  }
+  .import-status.error { color: rgba(200, 80, 60, 0.8); }
+  .import-status.success { color: rgba(80, 160, 80, 0.8); }
 </style>
 </head>
 <body>
@@ -184,11 +341,58 @@
       <label>Character</label>
       <div class="sprite-options" id="sprite-options"></div>
     </div>
+    <div class="settings-section" id="custom-sprites-section" style="display: none;">
+      <label>Your Characters</label>
+      <div class="sprite-options" id="custom-sprite-options"></div>
+    </div>
     <div class="settings-section">
       <label>AI Provider</label>
       <div class="provider-options" id="settings-ai-provider-options"></div>
     </div>
   </div>
+
+  <!-- Confirm delete modal -->
+  <div class="import-modal-overlay" id="confirm-delete-modal">
+    <div class="import-modal" style="max-width: 320px; text-align: center;">
+      <p style="font: 500 14px/1.5 'SF Pro Rounded', system-ui, sans-serif; color: #3d2b22; margin-bottom: 16px;" id="confirm-delete-text"></p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="copy-btn" id="confirm-delete-cancel" style="flex: 1;">Cancel</button>
+        <button class="import-file-btn" id="confirm-delete-ok" style="flex: 1; background: linear-gradient(135deg, rgba(200, 100, 80, 0.85), rgba(180, 70, 60, 0.85));">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import modal -->
+  <div class="import-modal-overlay" id="import-modal">
+    <div class="import-modal">
+      <h3>
+        Import Custom Character
+        <button id="import-modal-close">&times;</button>
+      </h3>
+
+      <div class="import-step">
+        <div class="import-step-label">Copy this prompt for AI image generation (Gemini, ChatGPT, Midjourney, etc.):</div>
+        <div class="prompt-box" id="prompt-text"></div>
+        <button class="copy-btn" id="copy-prompt-btn">Copy</button>
+      </div>
+
+      <div class="import-step">
+        <div class="import-step-label">Name your character:</div>
+        <div class="import-name-row">
+          <input type="text" id="import-name" placeholder="My Custom Pet" />
+        </div>
+      </div>
+
+      <div class="import-step">
+        <button class="import-file-btn" id="import-file-btn">
+          Select PNG File...
+          <input type="file" id="import-file-input" accept=".png,image/png" />
+        </button>
+        <div class="import-status" id="import-status"></div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/src/settings-ui.js"></script>
 </body>
 </html>

@@ -11,6 +11,7 @@ import { initBubble } from './bubble-manager.js';
 import { initBehavior } from './behavior.js';
 import { initInteraction } from './interaction.js';
 import { getDefaultScale, initProviderChooser, openSettingsWindow, showContextMenu, openChatWindow } from './settings.js';
+import { isCustomSprite, loadCustomSpriteDataUrl } from './custom-sprites.js';
 
 var pet = {
   canvas: document.getElementById('pet'),
@@ -80,8 +81,14 @@ function getSettingsSnapshot() {
 function applySpriteSelection(spriteKey) {
   if (!spriteKey || spriteKey === pet.currentSprite) return;
   pet.currentSprite = spriteKey;
-  pet.sprite.image.src = '/sprites/' + spriteKey + '.png';
-  pet.sprite.edgeClear = getSpriteRenderOptions(spriteKey).edgeClear || 0;
+  if (isCustomSprite(spriteKey)) {
+    loadCustomSpriteDataUrl(spriteKey).then(function(dataUrl) {
+      if (dataUrl) pet.sprite.image.src = dataUrl;
+    });
+  } else {
+    pet.sprite.image.src = '/sprites/' + spriteKey + '.png';
+    pet.sprite.edgeClear = getSpriteRenderOptions(spriteKey).edgeClear || 0;
+  }
 }
 
 document.addEventListener('contextmenu', function(e) {
@@ -191,13 +198,20 @@ function animationLoop(timestamp) {
 }
 requestAnimationFrame(animationLoop);
 
-var configLoadedPromise = loadConfig().then(function(cfg) {
+var configLoadedPromise = loadConfig().then(async function(cfg) {
   pet.petName = cfg.pet.name;
   pet.ownerName = cfg.owner.name;
   pet.aiProvider = cfg.aiProvider;
   providerChooser.syncAiProvider(cfg.aiProvider);
   if (cfg.sprite && cfg.sprite !== pet.currentSprite) {
-    applySpriteSelection(cfg.sprite);
+    pet.currentSprite = cfg.sprite;
+    if (isCustomSprite(cfg.sprite)) {
+      var dataUrl = await loadCustomSpriteDataUrl(cfg.sprite);
+      if (dataUrl) pet.sprite.image.src = dataUrl;
+    } else {
+      pet.sprite.image.src = '/sprites/' + cfg.sprite + '.png';
+      pet.sprite.edgeClear = getSpriteRenderOptions(cfg.sprite).edgeClear || 0;
+    }
   }
   var scale = cfg.pet_scale > 0 ? cfg.pet_scale : getDefaultScale();
   pet.sprite.setScale(scale);
