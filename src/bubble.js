@@ -1,4 +1,4 @@
-import { emitTo, listen } from '@tauri-apps/api/event';
+import { emit, listen } from '@tauri-apps/api/event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
 const STAGE_PAD = 8;
@@ -15,7 +15,7 @@ let hideTimer = null;
 let activeId = null;
 
 replyBtn.addEventListener('click', function() {
-  emitTo('main', 'bubble:reply', { id: activeId }).catch(function() {});
+  emit('bubble:reply', { id: activeId }).catch(function() {});
   hideBubble();
 });
 
@@ -36,7 +36,7 @@ function clearHideTimer() {
 async function hideBubble(options = {}) {
   clearHideTimer();
   bubbleEl.classList.remove('show');
-  await emitTo('main', 'bubble:hidden', { id: activeId });
+  await emit('bubble:hidden', { id: activeId });
   if (!options.skipWindowHide) {
     setTimeout(function() {
       appWindow.hide().catch(function() {});
@@ -47,6 +47,7 @@ async function hideBubble(options = {}) {
 function renderBubble(payload) {
   activeId = payload.id;
   bubbleEl.style.maxWidth = (payload.maxWidth || 280) + 'px';
+  bubbleEl.style.width = payload.bubbleWidth ? Math.round(payload.bubbleWidth) + 'px' : 'fit-content';
 
   // Render quote (user's message) + pet's response
   bubbleTextEl.innerHTML = '';
@@ -64,7 +65,7 @@ function renderBubble(payload) {
     const button = document.createElement('button');
     button.textContent = reaction;
     button.addEventListener('click', function() {
-      emitTo('main', 'bubble:reaction', { id: activeId, reaction: reaction }).catch(function() {});
+      emit('bubble:reaction', { id: activeId, reaction: reaction }).catch(function() {});
       hideBubble();
     });
     reactionsEl.appendChild(button);
@@ -88,37 +89,25 @@ function applyPlacement(payload) {
   }
 }
 
-listen('bubble:prepare', async function(event) {
-  clearHideTimer();
-  bubbleEl.classList.remove('show');
-  bubbleEl.style.visibility = 'hidden';
-  renderBubble(event.payload);
-  await new Promise(function(resolve) { requestAnimationFrame(resolve); });
-
-  await emitTo('main', 'bubble:measured', {
-    id: event.payload.id,
-    bubbleWidth: Math.ceil(bubbleEl.offsetWidth),
-    bubbleHeight: Math.ceil(bubbleEl.offsetHeight),
-    windowWidth: Math.ceil(bubbleEl.offsetWidth + STAGE_PAD * 2),
-    windowHeight: Math.ceil(bubbleEl.offsetHeight + STAGE_PAD * 2),
+async function applyWindowGeometry(payload) {
+  await appWindow.setSize({
+    type: payload.sizeType || 'Logical',
+    width: payload.windowWidth,
+    height: payload.windowHeight,
   });
-});
+  await appWindow.setPosition({
+    type: payload.positionType || 'Logical',
+    x: payload.x,
+    y: payload.y,
+  });
+}
 
 listen('bubble:display', async function(event) {
   clearHideTimer();
   renderBubble(event.payload);
   applyPlacement(event.payload);
 
-  await appWindow.setSize({
-    type: 'Physical',
-    width: event.payload.windowWidth,
-    height: event.payload.windowHeight,
-  });
-  await appWindow.setPosition({
-    type: 'Physical',
-    x: event.payload.x,
-    y: event.payload.y,
-  });
+  await applyWindowGeometry(event.payload);
 
   bubbleEl.style.visibility = 'visible';
   await appWindow.show();
@@ -134,4 +123,4 @@ listen('bubble:hide', function() {
 });
 
 appWindow.hide().catch(function() {});
-emitTo('main', 'bubble:ready', { label: 'bubble' }).catch(function() {});
+emit('bubble:ready', { label: 'bubble' }).catch(function() {});
