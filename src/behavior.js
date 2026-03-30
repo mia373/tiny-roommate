@@ -3,7 +3,7 @@
 import { Command } from '@tauri-apps/plugin-shell';
 import { STATES } from './sprite.js';
 import { getTimeSignals, getIdleSeconds, captureScreenContext, buildContextString, isScreenRecordingDenied } from './signals.js';
-import { think, getActivityLog, generateDailyDigest, loadConfig, ensurePetDataPath, checkAiCli, getAiProviderInfo, summarizePerceptionsForTimeline } from './brain.js';
+import { think, getActivityLog, generateDailyDigest, loadConfig, saveConfigField, hasCompletedOnboarding, ensurePetDataPath, checkAiCli, getAiProviderInfo, summarizePerceptionsForTimeline } from './brain.js';
 
 var WALK_SPEED = 50;
 var SCREEN_MARGIN = 30;
@@ -214,6 +214,12 @@ export function initBehavior(pet) {
     }
   }
 
+  function startAutonomousLoops() {
+    captureLoop();
+    scheduleDecision();
+    scheduleFidget();
+  }
+
   // =========================================================================
   // WALKING
   // =========================================================================
@@ -251,7 +257,7 @@ export function initBehavior(pet) {
       var ease = 1 - Math.pow(1 - progress, 2);
       var x = Math.round(pos.x + actualDx * ease);
       var y = Math.round(pos.y + actualDy * ease);
-      pet.appWindow.setPosition({ type: 'Physical', x: x, y: y }).catch(function() {});
+      pet.appWindow.setPosition({ type: 'Logical', x: x, y: y }).catch(function() {});
       if (progress < 1) {
         requestAnimationFrame(step);
       } else {
@@ -285,11 +291,21 @@ export function initBehavior(pet) {
       installHint: 'your preferred AI CLI',
     };
     var hasAiCli = await checkAiCli(pet.aiProvider);
+    var isFirstLaunch = !hasCompletedOnboarding(cfg);
 
-    pet.sprite.setState('happy');
-    pet.showBubble('hey! i\'m ' + pet.petName + ' ' + pet.voice().greet, 3000);
-    await sleep(3500);
+    if (!isFirstLaunch && !cfg.pet.introducedAt) {
+      cfg.pet.introducedAt = cfg.pet.born || new Date().toISOString();
+      await saveConfigField('introduced_at', cfg.pet.introducedAt);
+    }
 
+    if (isFirstLaunch) {
+      cfg.pet.introducedAt = new Date().toISOString();
+      await saveConfigField('introduced_at', cfg.pet.introducedAt);
+
+      pet.sprite.setState('happy');
+      pet.showBubble('hey! i\'m ' + pet.petName + ' ' + pet.voice().greet, 3000);
+      await sleep(3500);
+    }
     if (!hasAiCli) {
       pet.sprite.setState('sad');
       pet.showBubble('i can\'t find ' + providerInfo.displayName + ' on this machine... i\'ll hang out but i can\'t think or see your screen without it 🥺', 8000);
@@ -299,6 +315,13 @@ export function initBehavior(pet) {
       returnToBase();
       // Offline mode: only fidget animations, no LLM/perception
       scheduleFidget();
+      return;
+    }
+
+    if (!isFirstLaunch) {
+      returnToBase();
+      pet.lastInteractionTime = Date.now();
+      startAutonomousLoops();
       return;
     }
 
@@ -332,10 +355,8 @@ export function initBehavior(pet) {
     pet.llmBusy = false;
     pet.lastInteractionTime = Date.now();
 
-    // Start all three loops
-    captureLoop();
-    scheduleDecision();
-    scheduleFidget();
+    // Start autonomous loops after the one-time first impression finishes
+    startAutonomousLoops();
   }
 
   // =========================================================================

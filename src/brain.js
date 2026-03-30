@@ -31,7 +31,6 @@ function normalizeAiProvider(value) {
 }
 
 export { normalizeAiProvider };
-
 export function getSupportedAiProviders() {
   return Object.keys(AI_PROVIDERS).map(function(key) {
     return { ...AI_PROVIDERS[key] };
@@ -106,12 +105,15 @@ async function executeAiCommand(prompt, options) {
 
   try {
     var result = await Command.create(providerInfo.command, args, commandOptions).execute();
+    providerAvailability[providerInfo.id] = true;
     if (typeof result.code === 'number' && result.code !== 0) {
+      providerAvailability[providerInfo.id] = false;
       logAiCommandFailure(providerInfo, result);
       throw new Error(providerInfo.displayName + ' exited with code ' + result.code);
     }
     return result;
   } catch (err) {
+    providerAvailability[providerInfo.id] = false;
     logAiCommandError(providerInfo, err);
     throw err;
   }
@@ -129,7 +131,7 @@ async function resolvePetDataPaths() {
 
 // Structured config loaded from frontmatter
 let config = {
-  pet: { name: 'Phoebe', born: '' },
+  pet: { name: 'Phoebe', born: '', introducedAt: '' },
   owner: { name: '' },
   sprite: 'tabby_cat',
   pet_scale: 0,
@@ -231,6 +233,7 @@ export async function loadConfig() {
     const { fields } = parseFrontmatter(configRaw);
     if (fields.pet_name) config.pet.name = fields.pet_name;
     if (fields.born) config.pet.born = fields.born;
+    config.pet.introducedAt = fields.introduced_at || '';
     if (fields.owner_name) config.owner.name = fields.owner_name;
     if (fields.sprite) config.sprite = fields.sprite;
     if (fields.pet_scale) config.pet_scale = parseFloat(fields.pet_scale) || 0;
@@ -247,27 +250,40 @@ export async function loadConfig() {
 }
 
 var configWriteQueue = Promise.resolve();
+var LEGACY_ONBOARDING_THRESHOLD_MS = 5 * 60 * 1000;
 
-export function saveConfigField(key, value) {
-  // Update in-memory config immediately
+function applyConfigFieldToMemory(key, value) {
   if (key === 'pet_name') config.pet.name = value;
   if (key === 'born') config.pet.born = value;
+  if (key === 'introduced_at') config.pet.introducedAt = value;
   if (key === 'owner_name') config.owner.name = value;
   if (key === 'sprite') config.sprite = value;
   if (key === 'pet_scale') config.pet_scale = parseFloat(value) || 0;
   if (key === 'ai_provider') config.aiProvider = normalizeAiProvider(value);
+}
+
+export function saveConfigFields(updates) {
+  Object.keys(updates).forEach(function(key) {
+    applyConfigFieldToMemory(key, updates[key]);
+  });
 
   // Queue file writes so concurrent calls don't clobber each other
   configWriteQueue = configWriteQueue.then(async function() {
     const raw = await readPetFile('config.md');
     const { fields, body } = parseFrontmatter(raw);
-    fields[key] = key === 'ai_provider' ? normalizeAiProvider(value) : value;
+    Object.keys(updates).forEach(function(key) {
+      fields[key] = key === 'ai_provider' ? normalizeAiProvider(updates[key]) : updates[key];
+    });
     await writePetFile('config.md', serializeFrontmatter(fields, body));
   }).catch(function(err) {
-    console.error('Failed to save config field ' + key + ':', err);
+    console.error('Failed to save config field(s):', err);
   });
 
   return configWriteQueue;
+}
+
+export function saveConfigField(key, value) {
+  return saveConfigFields({ [key]: value });
 }
 
 export function getConfig() {
@@ -278,6 +294,16 @@ export function getConfig() {
     pet_scale: config.pet_scale,
     aiProvider: config.aiProvider,
   };
+}
+
+export function hasCompletedOnboarding(cfg) {
+  if (cfg && cfg.pet && cfg.pet.introducedAt) return true;
+  if (!cfg || !cfg.pet || !cfg.pet.born) return false;
+
+  var bornTime = Date.parse(cfg.pet.born);
+  if (!isFinite(bornTime)) return false;
+
+  return (Date.now() - bornTime) > LEGACY_ONBOARDING_THRESHOLD_MS;
 }
 
 // --- System prompt ---
@@ -410,7 +436,6 @@ async function ensureAiAvailable(provider) {
   }
   return checkAiCliWithOptions(providerInfo.id, { refresh: true });
 }
-
 export function isAiAvailable(provider) {
   var providerInfo = getAiProviderInfo(provider);
   return !!(providerInfo && providerAvailability[providerInfo.id] === true);

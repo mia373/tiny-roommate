@@ -4,6 +4,7 @@ owner_name:
 sprite: tabby_cat
 ai_provider:
 born:
+introduced_at:
 ---
 
 # Personality

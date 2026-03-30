@@ -53,6 +53,12 @@ The project should stay understandable to contributors:
 - reactions should feel short, cute, and contextual
 - when the model is uncertain, graceful fallback is better than exposing internal reasoning or malformed output
 
+### Relationship Continuity
+
+- the first-launch introduction should happen only once per `.pet-data/` relationship
+- subsequent app launches or dev reloads should resume the existing relationship instead of re-introducing the pet as a stranger
+- existing local memory should shape startup behavior whenever the pet has already met its owner
+
 ### Human Interaction
 
 - petting, dragging, and chatting are the primary direct interactions

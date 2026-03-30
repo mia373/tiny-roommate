@@ -18,7 +18,7 @@ When called, you receive a situation description and must output a short dialogu
 - `owner-timeline.md` — Historical daily activity summaries. Each day is a section with time blocks showing what the owner did. Generated automatically from perceptions.
 
 **Settings:**
-- `config.md` — Owner's preferences. Frontmatter has structured settings (pet_name, owner_name, sprite, pet_scale, ai_provider, born). Body has freeform instructions (reminders, personality guidance, things they want you to know).
+- `config.md` — Owner's preferences. Frontmatter has structured settings (pet_name, owner_name, sprite, born, introduced_at, pet_scale, ai_provider). Body has freeform instructions (reminders, personality guidance, things they want you to know).
 
 **Important:** Do NOT modify the frontmatter (the `---` block) in config.md. Those fields are managed by the app. You may freely edit me-identity.md, me-journal.md, and owner-memory.md.
 

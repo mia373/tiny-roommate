@@ -10,20 +10,23 @@ vi.mock('@tauri-apps/plugin-shell', () => ({
 createMock.mockImplementation(function() {
   return {
     execute: function() {
-      return Promise.resolve({ stdout: '', code: 0 });
+      return Promise.resolve({ stdout: '', stderr: '', code: 0 });
     },
   };
 });
 
 const {
-  parseResponse,
-  normalizeAiProvider,
+  getConfig,
   getSupportedAiProviders,
+  hasCompletedOnboarding,
+  normalizeAiProvider,
+  parseResponse,
   saveConfigField,
+  saveConfigFields,
   think,
 } = await import('../brain.js');
 
-beforeEach(() => {
+beforeEach(function() {
   createMock.mockClear();
   createMock.mockImplementation(function(command, args) {
     return {
@@ -31,11 +34,11 @@ beforeEach(() => {
         if (command === 'bash') {
           var script = Array.isArray(args) ? args[1] : '';
           if (script && script.indexOf('while [ ! -f "$dir/package.json" ]') >= 0) {
-            return Promise.resolve({ stdout: '/tmp/tinyroommate-pr7-followup\n', code: 0 });
+            return Promise.resolve({ stdout: '/tmp/tinyroommate-pr7-followup\n', stderr: '', code: 0 });
           }
-          return Promise.resolve({ stdout: '', code: 0 });
+          return Promise.resolve({ stdout: '', stderr: '', code: 0 });
         }
-        return Promise.resolve({ stdout: '', code: 0 });
+        return Promise.resolve({ stdout: '', stderr: '', code: 0 });
       },
     };
   });
@@ -104,6 +107,27 @@ describe('parseResponse', () => {
   });
 });
 
+describe('saveConfigFields', () => {
+  it('updates multiple config fields together in memory', async function() {
+    await saveConfigFields({
+      pet_name: 'Mochi',
+      owner_name: 'Ran',
+      sprite: 'tuxedo_cat',
+      pet_scale: '1.8',
+      ai_provider: 'gemini',
+      introduced_at: '2026-03-29T15:20:00.000Z',
+    });
+
+    var config = getConfig();
+    expect(config.pet.name).toBe('Mochi');
+    expect(config.owner.name).toBe('Ran');
+    expect(config.sprite).toBe('tuxedo_cat');
+    expect(config.pet_scale).toBe(1.8);
+    expect(config.aiProvider).toBe('gemini');
+    expect(config.pet.introducedAt).toBe('2026-03-29T15:20:00.000Z');
+  });
+});
+
 describe('AI provider helpers', () => {
   it('normalizes supported providers and rejects unknown values', () => {
     expect(normalizeAiProvider('Claude')).toBe('claude');
@@ -119,8 +143,7 @@ describe('AI provider helpers', () => {
   });
 
   it('uses the newly selected provider without requiring a restart', async () => {
-    saveConfigField('ai_provider', 'claude');
-    saveConfigField('ai_provider', 'gemini');
+    await saveConfigField('ai_provider', 'gemini');
 
     createMock.mockImplementation(function(command, args) {
       return {
@@ -128,15 +151,15 @@ describe('AI provider helpers', () => {
           if (command === 'bash') {
             var script = Array.isArray(args) ? args[1] : '';
             if (script && script.indexOf('while [ ! -f "$dir/package.json" ]') >= 0) {
-              return Promise.resolve({ stdout: '/tmp/tinyroommate-pr7-followup\n', code: 0 });
+              return Promise.resolve({ stdout: '/tmp/tinyroommate-pr7-followup\n', stderr: '', code: 0 });
             }
-            return Promise.resolve({ stdout: '', code: 0 });
+            return Promise.resolve({ stdout: '', stderr: '', code: 0 });
           }
           if (command === 'gemini' && Array.isArray(args) && args[0] === '--version') {
-            return Promise.resolve({ stdout: '1.0.0\n', code: 0 });
+            return Promise.resolve({ stdout: '1.0.0\n', stderr: '', code: 0 });
           }
           if (command === 'gemini' && Array.isArray(args) && args[0] === '-p') {
-            return Promise.resolve({ stdout: '{"text":"hi from gemini","state":"happy"}', code: 0 });
+            return Promise.resolve({ stdout: '{"text":"hi from gemini","state":"happy"}', stderr: '', code: 0 });
           }
           throw new Error('Unexpected command: ' + command + ' ' + JSON.stringify(args || []));
         },
@@ -156,6 +179,30 @@ describe('AI provider helpers', () => {
         return call[0] === 'gemini' && Array.isArray(call[1]) && call[1][0] === '-p';
       })
     ).toBe(true);
+  });
+});
+
+describe('hasCompletedOnboarding', () => {
+  it('returns false for a freshly created pet-data relationship without onboarding marker', function() {
+    expect(hasCompletedOnboarding({
+      pet: {
+        introducedAt: '',
+        born: new Date(Date.now() - 60 * 1000).toISOString(),
+      },
+    })).toBe(false);
+  });
+
+  it('returns true when onboarding marker exists', function() {
+    expect(hasCompletedOnboarding({ pet: { introducedAt: '2026-03-29T15:20:00.000Z' } })).toBe(true);
+  });
+
+  it('treats older pet-data as an existing relationship during migration', function() {
+    expect(hasCompletedOnboarding({
+      pet: {
+        introducedAt: '',
+        born: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+      },
+    })).toBe(true);
   });
 });
 

@@ -24,6 +24,8 @@ The project should not rely on tribal knowledge or scattered chat history to exp
 - If the implementation no longer matches the current docs, do not silently leave them diverged.
 - If a change is intentionally spec-breaking, update the spec first or in the same patch.
 - If docs are intentionally not updated, make that explicit in the PR and give a short reason.
+- If a change is intentionally spec-neutral, say so explicitly in the PR or final summary instead of silently skipping docs.
+- If you fix a behavior bug, add or update at least one regression test that would fail without the fix.
 
 ### Before Merging
 
@@ -38,6 +40,7 @@ The project should not rely on tribal knowledge or scattered chat history to exp
 
 - speech bubble positioning or sizing behavior
 - settings behavior, persistence, or performance expectations
+- AI provider selection, availability, or onboarding behavior
 - cursor/interaction behavior
 - layout rules around the pet
 - memory / brain protocol changes
@@ -63,6 +66,7 @@ Prefer tests that lock down the actual rule:
 - extract layout math into pure functions
 - extract state normalization into pure functions
 - test those functions directly
+- when a bug reaches users, add a regression test for the exact behavior path that broke
 
 This is usually better than trying to protect everything with brittle screenshot tests.
 
